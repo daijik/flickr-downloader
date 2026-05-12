@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flickr ダウンローダー</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Flickr ダウンローダー</h1>
+      <div id="authStatus"></div>
+    </header>
+
+    <main id="main" class="hidden">
+      <section class="card">
+        <h2>ダウンロード設定</h2>
+
+        <div class="form-group">
+          <label>期間指定モード</label>
+          <div class="mode-toggle">
+            <label><input type="radio" name="mode" value="single" checked> 単月</label>
+            <label><input type="radio" name="mode" value="range"> 期間指定</label>
+          </div>
+        </div>
+
+        <div id="singleMode">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="singleYear">年</label>
+              <select id="singleYear"></select>
+            </div>
+            <div class="form-group">
+              <label for="singleMonth">月</label>
+              <select id="singleMonth"></select>
+            </div>
+          </div>
+        </div>
+
+        <div id="rangeMode" class="hidden">
+          <div class="form-row">
+            <div class="form-group">
+              <label>開始</label>
+              <div class="date-pair">
+                <select id="startYear"></select>
+                <select id="startMonth"></select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>終了</label>
+              <div class="date-pair">
+                <select id="endYear"></select>
+                <select id="endMonth"></select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="sizeSelect">写真サイズ</label>
+          <select id="sizeSelect">
+            <option value="s">Small (240px)</option>
+            <option value="z">Medium (640px)</option>
+            <option value="l" selected>Large (1024px)</option>
+            <option value="o">Original</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="folderInput">保存先フォルダ（絶対パス）</label>
+          <input type="text" id="folderInput" placeholder="/Users/yourname/Photos/Flickr">
+        </div>
+
+        <button id="downloadBtn" class="btn-primary">ダウンロード開始</button>
+      </section>
+
+      <section id="progressSection" class="card hidden">
+        <h2>進捗</h2>
+        <div id="progressInfo">待機中...</div>
+        <div class="progress-bar">
+          <div id="progressFill" class="progress-fill"></div>
+        </div>
+        <div id="progressLog" class="log"></div>
+      </section>
+    </main>
+
+    <div id="loginSection" class="card center hidden">
+      <p>Flickr アカウントにログインしてください</p>
+      <a href="/auth/start" class="btn-primary">Flickr でログイン</a>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
