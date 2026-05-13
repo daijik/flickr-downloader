@@ -130,7 +130,7 @@ const SIZE_FALLBACKS = {
 
 async function* streamDownload(sy, sm, ey, em, size, folder) {
   const pad = n => String(n).padStart(2, '0');
-  const extras = 'url_s,url_z,url_l,url_o,date_taken,date_upload,originalformat';
+  const extras = 'url_s,url_z,url_l,url_o,date_taken,originalformat';
   const lastDay = new Date(ey, em, 0).getDate();
   const minDate = `${sy}-${pad(sm)}-01 00:00:00`;
   const maxDate = `${ey}-${pad(em)}-${pad(lastDay)} 23:59:59`;
@@ -162,7 +162,10 @@ async function* streamDownload(sy, sm, ey, em, size, folder) {
         continue;
       }
 
-      const takenMatch = (photo.date_taken || '').match(/^(\d{4})-(\d{2})/);
+      // Flickr returns 'datetaken' (no underscore) and 'datetakenunknown'=1 when date is unset
+      const takenMatch = photo.datetakenunknown !== '1'
+        ? (photo.datetaken || '').match(/^(\d{4})-(\d{2})/)
+        : null;
       let year, month;
       if (takenMatch) {
         year = takenMatch[1];
