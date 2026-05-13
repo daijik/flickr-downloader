@@ -153,7 +153,8 @@ function startDownload(sy, sm, ey, em, size, folder) {
       } else if (ev.skipped) {
         addLog(`→ スキップ: ${ev.title || ''}`, 'skip');
       } else {
-        addLog(`✓ ${ev.title || ''}`);
+        const icon = ev.isVideo ? '▶' : '✓';
+        addLog(`${icon} ${ev.title || ''}`);
       }
 
     } else if (ev.type === 'done') {

@@ -154,9 +154,28 @@ async function* streamDownload(sy, sm, ey, em, size, folder) {
     });
 
     for (const photo of data.photos.photo) {
-      const photoUrl = (SIZE_FALLBACKS[size] || SIZE_FALLBACKS.l).map(k => photo[k]).find(Boolean);
+      const isVideo = photo.media === 'video';
 
-      if (!photoUrl) {
+      // URL と拡張子の決定
+      let downloadUrl, ext;
+      if (isVideo) {
+        try {
+          const streamData = await flickrCall('flickr.video.getStreamInfo', { photo_id: photo.id });
+          const streams = [].concat(streamData.streams?.stream || []);
+          const stream = ['orig', 'hd', 'sd'].map(t => streams.find(s => s.type === t)).find(Boolean);
+          downloadUrl = stream?._content;
+          ext = 'mp4';
+        } catch (e) {
+          errs++;
+          yield { type: 'progress', current: done + errs, total, error: `動画情報取得失敗: ${photo.title || photo.id}` };
+          continue;
+        }
+      } else {
+        downloadUrl = (SIZE_FALLBACKS[size] || SIZE_FALLBACKS.l).map(k => photo[k]).find(Boolean);
+        ext = photo.originalformat || downloadUrl?.match(/\.(\w+)(\?|$)/)?.[1] || 'jpg';
+      }
+
+      if (!downloadUrl) {
         errs++;
         yield { type: 'progress', current: done + errs, total, error: `URLなし: ${photo.id}` };
         continue;
@@ -178,12 +197,11 @@ async function* streamDownload(sy, sm, ey, em, size, folder) {
         year = 'unknown';
         month = 'unknown';
       }
-      const ext = photo.originalformat || photoUrl.match(/\.(\w+)(\?|$)/)?.[1] || 'jpg';
       const destPath = path.join(folder, year, month, `${photo.id}.${ext}`);
 
       if (fs.existsSync(destPath)) {
         done++;
-        yield { type: 'progress', current: done + errs, total, skipped: true, title: photo.title };
+        yield { type: 'progress', current: done + errs, total, skipped: true, title: photo.title, isVideo };
         continue;
       }
 
@@ -193,9 +211,9 @@ async function* streamDownload(sy, sm, ey, em, size, folder) {
       }
 
       try {
-        await downloadFile(photoUrl, destPath);
+        await downloadFile(downloadUrl, destPath);
         done++;
-        yield { type: 'progress', current: done + errs, total, title: photo.title };
+        yield { type: 'progress', current: done + errs, total, title: photo.title, isVideo };
       } catch (e) {
         errs++;
         yield { type: 'progress', current: done + errs, total, error: e.message };
