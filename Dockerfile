@@ -1,5 +1,7 @@
 FROM registry.access.redhat.com/ubi9/nodejs-20
 
+USER root
+
 WORKDIR /opt/app-root/src
 
 COPY package.json package-lock.json ./

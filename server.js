@@ -94,7 +94,11 @@ function downloadFile(url, destPath, depth = 0) {
         res.resume();
         return reject(new Error(`HTTP ${res.statusCode}`));
       }
-      fs.mkdirSync(path.dirname(destPath), { recursive: true });
+      try {
+        fs.mkdirSync(path.dirname(destPath), { recursive: true });
+      } catch (e) {
+        return reject(e);
+      }
       const out = fs.createWriteStream(destPath);
       res.pipe(out);
       out.on('finish', resolve);
@@ -126,7 +130,7 @@ const SIZE_FALLBACKS = {
 
 async function* streamDownload(sy, sm, ey, em, size, folder) {
   const pad = n => String(n).padStart(2, '0');
-  const extras = 'url_s,url_z,url_l,url_o,date_taken,originalformat';
+  const extras = 'url_s,url_z,url_l,url_o,date_taken,date_upload,originalformat';
   const lastDay = new Date(ey, em, 0).getDate();
   const minDate = `${sy}-${pad(sm)}-01 00:00:00`;
   const maxDate = `${ey}-${pad(em)}-${pad(lastDay)} 23:59:59`;
@@ -158,9 +162,19 @@ async function* streamDownload(sy, sm, ey, em, size, folder) {
         continue;
       }
 
-      const match = (photo.date_taken || '').match(/^(\d{4})-(\d{2})/);
-      const year = match ? match[1] : 'unknown';
-      const month = match ? match[2] : 'unknown';
+      const takenMatch = (photo.date_taken || '').match(/^(\d{4})-(\d{2})/);
+      let year, month;
+      if (takenMatch) {
+        year = takenMatch[1];
+        month = takenMatch[2];
+      } else if (photo.dateupload) {
+        const d = new Date(parseInt(photo.dateupload) * 1000);
+        year = String(d.getFullYear());
+        month = String(d.getMonth() + 1).padStart(2, '0');
+      } else {
+        year = 'unknown';
+        month = 'unknown';
+      }
       const ext = photo.originalformat || photoUrl.match(/\.(\w+)(\?|$)/)?.[1] || 'jpg';
       const destPath = path.join(folder, year, month, `${photo.id}.${ext}`);
 
