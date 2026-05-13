@@ -61,30 +61,32 @@ podman build -t flickr-downloader .
 ## 起動
 
 ```bash
+mkdir -p ./data
 podman run -p 3000:3000 \
   --env-file .env \
-  -v ./data:/opt/app-root/src/data:Z \
-  -v /path/to/save/photos:/photos:Z \
+  -v ./data:/opt/app-root/src/data \
+  -v /Users/yourname/Downloads/flickrphotos:/downloads \
   flickr-downloader
 ```
 
 | オプション | 説明 |
 |---|---|
 | `--env-file .env` | API キーを渡す |
-| `-v ./data:...` | 認証トークンをホスト側に永続化 |
-| `-v /path/to/save/photos:/photos:Z` | ダウンロード先ディレクトリをマウント |
+| `-v ./data:...` | 認証トークンをホスト側に永続化（事前に `mkdir -p ./data` が必要） |
+| `-v /host/path:/downloads` | ダウンロード先ディレクトリをマウント。`/host/path` は Mac 側の保存先 |
 
 ブラウザで `http://localhost:3000` を開いてください。
 
-> **Note**  
-> `:Z` は SELinux 環境でのファイルアクセス権を正しく設定する Podman のフラグです。  
-> SELinux を使用していない環境では省略できます。
+> **Note（macOS + Podman）**  
+> コンテナ内から Mac の `/Users/...` パスに直接書き込もうとすると権限エラーになります。  
+> 必ず `-v /mac/path:/downloads` でマウントし、UI では `/downloads` を入力してください。
 
 ## 使い方
 
 1. 「Flickr でログイン」ボタンをクリックして OAuth 認証
 2. 期間（単月または範囲）・サイズ・保存先フォルダを指定
-   - フォルダはコンテナ内のパスを入力（例: `/photos/Flickr`）
+   - **保存先フォルダにはコンテナ内のパスを入力**（例: `/downloads`）
+   - ホスト側の保存先は `-v /mac/path:/downloads` でマウントしておく
 3. 「ダウンロード開始」をクリック
 
 認証トークンは `data/` ディレクトリに保存されます。コンテナを再起動しても再ログインは不要です。

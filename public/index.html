@@ -68,8 +68,9 @@
         </div>
 
         <div class="form-group">
-          <label for="folderInput">保存先フォルダ（絶対パス）</label>
-          <input type="text" id="folderInput" placeholder="/Users/yourname/Photos/Flickr">
+          <label for="folderInput">保存先フォルダ（コンテナ内パス）</label>
+          <input type="text" id="folderInput" placeholder="/downloads">
+          <p class="hint">ホストのフォルダを <code>-v /host/path:/downloads</code> でマウントし、<code>/downloads</code> と入力してください</p>
         </div>
 
         <button id="downloadBtn" class="btn-primary">ダウンロード開始</button>
