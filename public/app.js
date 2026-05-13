@@ -99,14 +99,24 @@ function addLog(text, cls) {
   log.scrollTop = log.scrollHeight;
 }
 
+$('stopBtn').addEventListener('click', async () => {
+  await fetch('/api/download/stop', { method: 'POST' });
+  $('stopBtn').disabled = true;
+  $('stopBtn').textContent = '停止中...';
+});
+
 function startDownload(sy, sm, ey, em, size, folder) {
   const btn = $('downloadBtn');
+  const stopBtn = $('stopBtn');
   const section = $('progressSection');
   const fill = $('progressFill');
   const info = $('progressInfo');
   const log = $('progressLog');
 
   btn.disabled = true;
+  stopBtn.disabled = false;
+  stopBtn.textContent = '停止';
+  stopBtn.classList.remove('hidden');
   section.classList.remove('hidden');
   log.innerHTML = '';
   fill.style.width = '0%';
@@ -145,12 +155,21 @@ function startDownload(sy, sm, ey, em, size, folder) {
       addLog(`ダウンロード完了 (${ev.downloaded} 件)`, 'done');
       es.close();
       btn.disabled = false;
+      stopBtn.classList.add('hidden');
+
+    } else if (ev.type === 'stopped') {
+      info.textContent = `停止: ${ev.downloaded} 件ダウンロード済み`;
+      addLog(`停止しました (${ev.downloaded} 件完了)`, 'done');
+      es.close();
+      btn.disabled = false;
+      stopBtn.classList.add('hidden');
 
     } else if (ev.type === 'error') {
       info.textContent = `エラー: ${ev.message}`;
       addLog(`✗ ${ev.message}`, 'error');
       es.close();
       btn.disabled = false;
+      stopBtn.classList.add('hidden');
     }
   };
 
@@ -160,5 +179,6 @@ function startDownload(sy, sm, ey, em, size, folder) {
     addLog('接続エラー', 'error');
     es.close();
     btn.disabled = false;
+    stopBtn.classList.add('hidden');
   };
 }

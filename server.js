@@ -187,6 +187,11 @@ async function* streamDownload(sy, sm, ey, em, size, folder) {
         continue;
       }
 
+      if (stopRequested) {
+        yield { type: 'stopped', downloaded: done, errors: errs };
+        return;
+      }
+
       try {
         await downloadFile(photoUrl, destPath);
         done++;
@@ -200,6 +205,9 @@ async function* streamDownload(sy, sm, ey, em, size, folder) {
 
   yield { type: 'done', downloaded: done, errors: errs };
 }
+
+// --- 停止フラグ ---
+let stopRequested = false;
 
 // --- ルーティング ---
 app.use(express.static(path.join(__dirname, 'public')));
@@ -255,12 +263,18 @@ app.get('/auth/logout', (_, res) => {
   res.redirect('/');
 });
 
+app.post('/api/download/stop', (_, res) => {
+  stopRequested = true;
+  res.json({ ok: true });
+});
+
 app.get('/api/download/stream', async (req, res) => {
   if (!store.accessToken) return res.status(401).json({ error: '未認証' });
   const { startYear, startMonth, endYear, endMonth, size, folder } = req.query;
   if (!startYear || !startMonth || !endYear || !endMonth || !size || !folder) {
     return res.status(400).json({ error: 'パラメータが不足しています' });
   }
+  stopRequested = false;
   res.writeHead(200, {
     'Content-Type': 'text/event-stream',
     'Cache-Control': 'no-cache',

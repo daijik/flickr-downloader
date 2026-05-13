@@ -85,6 +85,20 @@ select:focus, input[type="text"]:focus {
 .btn-primary:hover { background: #2a5ea0; }
 .btn-primary:disabled { background: #1a2030; color: #405060; cursor: not-allowed; }
 
+.btn-row { display: flex; gap: 12px; align-items: center; margin-top: 4px; }
+
+.btn-stop {
+  padding: 10px 24px;
+  font-size: 14px;
+  background: transparent;
+  border: 1px solid #8a3030;
+  border-radius: 4px;
+  color: #e07070;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.btn-stop:hover { background: #2a1010; }
+
 .btn-link {
   background: none;
   border: none;

@@ -73,7 +73,10 @@
           <p class="hint">ホストのフォルダを <code>-v /host/path:/downloads</code> でマウントし、<code>/downloads</code> と入力してください</p>
         </div>
 
-        <button id="downloadBtn" class="btn-primary">ダウンロード開始</button>
+        <div class="btn-row">
+          <button id="downloadBtn" class="btn-primary">ダウンロード開始</button>
+          <button id="stopBtn" class="btn-stop hidden">停止</button>
+        </div>
       </section>
 
       <section id="progressSection" class="card hidden">
