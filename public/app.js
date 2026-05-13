@@ -61,6 +61,13 @@ async function checkAuth() {
 
 checkAuth();
 
+// --- シャットダウン ---
+$('shutdownBtn').addEventListener('click', async () => {
+  if (!confirm('サーバーを停止しますか？\nコンテナを再起動するまで利用できなくなります。')) return;
+  await fetch('/api/shutdown', { method: 'POST' }).catch(() => {});
+  $('shutdownOverlay').classList.remove('hidden');
+});
+
 // --- ダウンロード開始 ---
 $('downloadBtn').addEventListener('click', () => {
   const mode = document.querySelector('input[name="mode"]:checked').value;

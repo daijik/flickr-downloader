@@ -10,9 +10,11 @@
   <div class="container">
     <header>
       <h1>Flickr ダウンローダー</h1>
-      <div id="authStatus"></div>
+      <div class="header-right">
+        <div id="authStatus"></div>
+        <button id="shutdownBtn" class="btn-shutdown" title="サーバーを停止する">サーバー停止</button>
+      </div>
     </header>
-
     <main id="main" class="hidden">
       <section class="card">
         <h2>ダウンロード設定</h2>
@@ -93,6 +95,9 @@
       <p>Flickr アカウントにログインしてください</p>
       <a href="/auth/start" class="btn-primary">Flickr でログイン</a>
     </div>
+  </div>
+  <div id="shutdownOverlay" class="shutdown-overlay hidden">
+    <p>サーバーを停止しました。<br>コンテナを再起動するまで利用できません。</p>
   </div>
 
   <script src="app.js"></script>

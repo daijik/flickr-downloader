@@ -292,6 +292,11 @@ app.get('/api/download/stream', async (req, res) => {
   if (!res.writableEnded) res.end();
 });
 
+app.post('/api/shutdown', (_, res) => {
+  res.json({ ok: true });
+  setTimeout(() => process.exit(0), 300);
+});
+
 app.listen(PORT, () => {
   console.log(`Flickr ダウンローダー起動中: http://localhost:${PORT}`);
 });

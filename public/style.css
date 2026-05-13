@@ -113,7 +113,33 @@ select:focus, input[type="text"]:focus {
 .center { text-align: center; }
 .center p { margin-bottom: 16px; color: #7080a0; }
 
+.header-right { display: flex; align-items: center; gap: 20px; }
 #authStatus { font-size: 13px; color: #6080a0; display: flex; align-items: center; gap: 12px; }
+
+.btn-shutdown {
+  padding: 6px 14px;
+  font-size: 12px;
+  background: transparent;
+  border: 1px solid #5a2020;
+  border-radius: 4px;
+  color: #a05050;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.btn-shutdown:hover { background: #2a1010; border-color: #8a3030; color: #e07070; }
+
+.shutdown-overlay {
+  position: fixed;
+  inset: 0;
+  background: #0a0505;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #c06060;
+  font-size: 16px;
+  text-align: center;
+  line-height: 2;
+}
 #authStatus .username { color: #7eb8f7; font-weight: 500; }
 
 .progress-bar {
